@@ -2,6 +2,7 @@ package main;
 
 import builder.BuilderTB;
 import builder.TableProduct;
+import dbService.DBService;
 import metrics.Metrics;
 
 import java.util.Iterator;
@@ -35,13 +36,15 @@ public class MainMetricRun {
         }
     }
 
-    public void fetchDataToProduct() throws Exception{
+    public void fetchDataToProduct() throws Exception { //TODO implement exception
 
         if(builderTB.isProductEmpty()) {
             throw new Exception("Product has no metrics");
         }
 
         TableProduct tableProduct = builderTB.getProduct();
+        DBService dbService = new DBService(tableProduct.getCredentials().getDbName(),
+                                            tableProduct.getCredentials().getUserName());
 
         Iterator<Metrics> itr = tableProduct.getMetricsIterator();
 
@@ -49,7 +52,13 @@ public class MainMetricRun {
         {
             Metrics currentEntry = itr.next();
 
-            Log(currentEntry.getQuery(tableProduct.getCredentials().getSchemaName(), tableProduct.getCredentials().getTableName()));
+            dbService.visit(
+                    currentEntry,
+                    tableProduct.getCredentials().getSchemaName(),
+                    tableProduct.getCredentials().getTableName()
+            );
+
+            Log(currentEntry.getInfo());
         }
     }
 

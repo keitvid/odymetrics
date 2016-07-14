@@ -4,6 +4,7 @@ import main.DbCredentials;
 import metrics.Metrics;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -13,21 +14,25 @@ public class TableProduct {
     private List<Metrics> listOfMetrics;
     private DbCredentials dbCredentials;
 
-    void addMetric(Metrics obj){
+    public void addMetric(Metrics obj){
         listOfMetrics.add(obj);
     }
+
+    public Boolean isEmpty(){return listOfMetrics.isEmpty();}
 
     public TableProduct() {
         listOfMetrics = new ArrayList<Metrics>();
     }
 
-    void addCredentials(DbCredentials obj) {
+    public void addCredentials(DbCredentials obj) {
         dbCredentials = obj;
     }
 
-    DbCredentials getCredentials(){
+    public DbCredentials getCredentials(){
         return dbCredentials;
     }
+
+    public Iterator<Metrics> getMetricsIterator(){return listOfMetrics.iterator();}
 
     @Override
     public String toString() {

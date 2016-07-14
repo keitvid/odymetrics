@@ -17,6 +17,8 @@ public class BuilderTB {
 
     public TableProduct getProduct() {return tableProduct;}
 
+    public Boolean isProductEmpty(){return getProduct().isEmpty();}
+
     public void addCredentials(DbCredentials creds) {
         getProduct().addCredentials(creds); //TODO add flag check
     }

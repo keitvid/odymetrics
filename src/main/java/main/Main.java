@@ -1,8 +1,5 @@
 package main;
 
-import builder.BuilderTB;
-import builder.TableProduct;
-
 import java.util.*;
 
 /**
@@ -17,7 +14,7 @@ public class Main {
 
     public static Boolean DEBUG = false;
 
-    private static void Log(String str) {
+    public static void Log(String str) {
         System.out.println(str);
     }
 
@@ -95,8 +92,7 @@ public class Main {
         return new DbCredentials(dbName, schemaName, tableName, userName, propFilePath);
     }
 
-    private static void printUsage()
-    {
+    private static void printUsage() {
         Log("Usage: java -jar ody-metrics-1.0.jar [argument ...] metricsfile...");
         Log("Options:");
         Log("-d Database name");
@@ -107,7 +103,7 @@ public class Main {
         Log("--debug Toggle debug mode");
     }
 
-    public static void main(String[] arg) throws Exception{
+    public static void main(String[] arg) throws Exception {
 
         if (arg[0].equals("-?") || arg[0].equals("--help")) {
             printUsage();
@@ -127,22 +123,13 @@ public class Main {
             printUsage();
         }
 
-        BuilderTB builder = new BuilderTB();
+        MainMetricRun run = new MainMetricRun(dbCreds);
 
-        builder.addCredentials(dbCreds);
-        Log("Adding the following metrics for the run:");
-        builder.printThemAll();
-        builder.populateMetrics();
-
-        TableProduct tableProduct = builder.getProduct();
-
-        if(DEBUG) {
-            Log("");
-            Log(tableProduct.toString());
-        }
+        run.initializeProductFromFile();
+        run.initializeProductManually();
+        run.fetchDataToProduct();
 
         /*
-
         Log("");
 
         String path = "d:\\sources\\ohdsi\\trash\\";

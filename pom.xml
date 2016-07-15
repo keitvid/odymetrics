@@ -8,4 +8,12 @@
     <artifactId>ody-metrics</artifactId>
     <version>1.0</version>
 
+    <dependencies>
+        <dependency>
+            <groupId>postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>9.1-901.jdbc4</version>
+        </dependency>
+    </dependencies>
+
 </project>

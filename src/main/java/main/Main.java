@@ -1,8 +1,5 @@
 package main;
 
-import builder.BuilderTB;
-import builder.TableProduct;
-
 import java.util.*;
 
 /**
@@ -17,11 +14,11 @@ public class Main {
 
     public static Boolean DEBUG = false;
 
-    private static void Log(String str) {
+    public static void Log(String str) {
         System.out.println(str);
     }
 
-    private static void parseArgs( String[] args) throws IllegalArgumentException {
+    private static void parseArgs(String[] args) throws IllegalArgumentException {
         for (int i = 0; i < args.length; i++) {
             switch (args[i].charAt(0)) {
                 case '-':
@@ -95,8 +92,7 @@ public class Main {
         return new DbCredentials(dbName, schemaName, tableName, userName, propFilePath);
     }
 
-    private static void printUsage()
-    {
+    private static void printUsage() {
         Log("Usage: java -jar ody-metrics-1.0.jar [argument ...] metricsfile...");
         Log("Options:");
         Log("-d Database name");
@@ -107,9 +103,9 @@ public class Main {
         Log("--debug Toggle debug mode");
     }
 
-    public static void main(String[] arg) throws Exception{
+    public static void main(String[] arg) throws Exception {
 
-        if (arg[0].equals("-?") || arg[0].equals("--help")) {
+        if (arg.length == 0 || arg[0].equals("-?") || arg[0].equals("--help")) {
             printUsage();
             return;
         }
@@ -127,28 +123,19 @@ public class Main {
             printUsage();
         }
 
-        BuilderTB builder = new BuilderTB();
+        MainMetricRun run = new MainMetricRun(dbCreds);
 
-        builder.addCredentials(dbCreds);
-        Log("Adding the following metrics for the run:");
-        builder.printThemAll();
-        builder.populateMetrics();
-
-        TableProduct tableProduct = builder.getProduct();
-
-        if(DEBUG) {
-            Log("");
-            Log(tableProduct.toString());
-        }
+        run.initializeProductFromFile();
+        run.initializeProductManually();
+        run.performRun();
 
         /*
-
         Log("");
 
         String path = "d:\\sources\\ohdsi\\trash\\";
         for (Metrics obj: metrics) {
             byte [] bytes_out = SerializeHelper.serialize(obj);
-            String filename = obj.getClass().getSimpleName() + Long.toHexString(obj.getId()) + ".ser";
+            String filename = obj.getClass().getSimpleName() + Long.toHexString(obj.GetId()) + ".ser";
             FileOutputStream fos = new FileOutputStream(path + filename);
             fos.write(bytes_out);
             fos.close();

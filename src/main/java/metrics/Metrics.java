@@ -19,6 +19,7 @@ public abstract class Metrics implements Serializable {
     public Metrics(String col_name) {
         id = nextId.incrementAndGet();
         this.col_name = col_name;
+        isEmpty = true;
     }
 
     public String getQuery(String schema_name, String table_name)
@@ -35,9 +36,9 @@ public abstract class Metrics implements Serializable {
 
     public abstract String getInfo();
 
-    public  Boolean getExecute() {
+    public  Boolean isEmpty() {
         return isEmpty;
     }
 
-    public Long getId(){return id;}
+    public Long GetId(){return id;}
 }

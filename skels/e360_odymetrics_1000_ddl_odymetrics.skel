@@ -1,0 +1,95 @@
+-- *******************************************************************
+-- NAME: e360_odymetrics_1000_ddl_odymetrics.skel
+-- DESC: Create table for odymetrics
+-- *******************************************************************
+-- CHANGE LOG:
+-- DATE         VERS  INITIAL  CHANGE DESCRIPTION
+-- -----------  ----  -------  ------------------------------------------
+--                      1.00           Initial create
+--
+-- *******************************************************************
+
+-- -------------------------------------------------------------------
+-- DDL Start
+-- -------------------------------------------------------------------
+  EXECUTE PREP_INSERT_LOG
+        ( 0                              -- Step Number
+        , 'PR - DDL: odymetrics_run'   -- Step Name
+        , 'LOAD START'                   -- Status
+        );
+
+  COMMIT
+  ;
+
+-- -------------------------------------------------------------------
+-- Table : ODYMETRICS_RUN
+-- -------------------------------------------------------------------
+
+  DROP TABLE IF EXISTS #PR_SCHEMA_NAME#.ODYMETRICS_RUN CASCADE;
+  
+  CREATE TABLE #PR_SCHEMA_NAME#.ODYMETRICS_RUN
+  (
+    RUN_ID            INTEGER IDENTITY(1,1) NOT NULL ENCODE LZO,
+    TABLE_NAME        VARCHAR(100) NOT NULL ENCODE LZO,
+    RUN_TIME          DATE NOT NULL ENCODE LZO,
+    ROWS              INTEGER ENCODE LZO,
+    UNIQUE_ROWS       INTEGER ENCODE LZO,
+    HAS_DUPLICATES    BOOLEAN,
+    PRIMARY KEY( RUN_ID )
+  )
+  DISTSTYLE EVEN;
+  
+  COMMIT;
+
+-- -------------------------------------------------------------------
+-- DDL End
+-- -------------------------------------------------------------------
+  EXECUTE PREP_UPDATE_LOG
+        ( 0                        -- Step Number
+        , 'DDL - END'             -- Status
+        );
+
+  COMMIT
+  ;
+
+
+-- -------------------------------------------------------------------
+-- DDL Start
+-- -------------------------------------------------------------------
+  EXECUTE PREP_INSERT_LOG
+        ( 0                              -- Step Number
+        , 'PR - DDL: odymetrics_columns'   -- Step Name
+        , 'LOAD START'                   -- Status
+        );
+
+  COMMIT
+  ;
+
+-- -------------------------------------------------------------------
+-- Table : ODYMETRICS_COLUMNS
+-- -------------------------------------------------------------------
+
+  DROP TABLE IF EXISTS #PR_SCHEMA_NAME#.ODYMETRICS_COLUMNS CASCADE;
+  
+  CREATE TABLE #PR_SCHEMA_NAME#.ODYMETRICS_COLUMNS
+  (
+    METRIC_ID         INTEGER IDENTITY(1,1) NOT NULL ENCODE LZO,
+    DATA              VARCHAR(512) NOT NULL ENCODE LZO,
+    RUN_ID            INTEGER NOT NULL ENCODE LZO,
+    PRIMARY KEY( METRIC_ID ),
+    FOREIGN KEY( RUN_ID ) REFERENCES #PR_SCHEMA_NAME#.ODYMETRICS_RUN( RUN_ID )
+  )
+  DISTSTYLE EVEN;
+  
+  COMMIT;
+
+-- -------------------------------------------------------------------
+-- DDL End
+-- -------------------------------------------------------------------
+  EXECUTE PREP_UPDATE_LOG
+        ( 0                        -- Step Number
+        , 'DDL - END'             -- Status
+        );
+
+  COMMIT
+  ;

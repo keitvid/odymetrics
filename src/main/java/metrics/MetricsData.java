@@ -28,16 +28,16 @@ public class MetricsData implements Serializable {
         this.type = MetricType.TYPE_STRING;
     }
     public enum MetricType {
-        TYPE_LONG, TYPE_LIST, TYPE_STRING
+        TYPE_NONE, TYPE_LONG, TYPE_LIST, TYPE_STRING
     }
 
-    MetricType getType() {
+    public MetricType getType() {
         return type;
     }
 
-    Long getLong() {
+    public Long getLong() {
         return data_long;
     }
 
-    private MetricsData() {}
+    public MetricsData() {this.type = MetricType.TYPE_NONE;}
 }

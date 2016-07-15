@@ -33,10 +33,11 @@ public class MainMetricRun {
         if(DEBUG) {
             Log("");
             Log(builderTB.getProduct().toString());
+            Log("");
         }
     }
 
-    public void fetchDataToProduct() throws Exception { //TODO implement exception
+    public void performRun() throws Exception { //TODO implement exception
 
         if(builderTB.isProductEmpty()) {
             throw new Exception("Product has no metrics");
@@ -45,6 +46,32 @@ public class MainMetricRun {
         TableProduct tableProduct = builderTB.getProduct();
         DBService dbService = new DBService(tableProduct.getCredentials().getDbName(),
                                             tableProduct.getCredentials().getUserName());
+
+        tableProduct.setDate();
+
+        Long rowsCount = dbService.executeQuery(
+                String.format("select count(*) from %s.%s",
+                tableProduct.getCredentials().getSchemaName(),
+                tableProduct.getCredentials().getTableName())
+        );
+
+        tableProduct.setRowsCount(rowsCount);
+
+        Long uniqueRowsCount = dbService.executeQuery(
+                String.format("select distinct count(*) from %s.%s",
+                tableProduct.getCredentials().getSchemaName(),
+                tableProduct.getCredentials().getTableName())
+        );
+
+        tableProduct.setUniqueRowsCount(uniqueRowsCount);
+
+        if(DEBUG){
+            Log("Date:              " + tableProduct.getDate().toString());
+            Log("Rows count:        " + tableProduct.getRowsCount());
+            Log("Unique Rows count: " + tableProduct.getUniqueRowsCount());
+            Log("Has Duplicates:    " + tableProduct.hasDuplicates().toString());
+            Log("");
+        }
 
         Iterator<Metrics> itr = tableProduct.getMetricsIterator();
 
@@ -58,7 +85,9 @@ public class MainMetricRun {
                     tableProduct.getCredentials().getTableName()
             );
 
-            Log(currentEntry.getInfo());
+            if(DEBUG) {
+                Log(currentEntry.getInfo());
+            }
         }
     }
 

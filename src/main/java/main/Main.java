@@ -18,7 +18,7 @@ public class Main {
         System.out.println(str);
     }
 
-    private static void parseArgs( String[] args) throws IllegalArgumentException {
+    private static void parseArgs(String[] args) throws IllegalArgumentException {
         for (int i = 0; i < args.length; i++) {
             switch (args[i].charAt(0)) {
                 case '-':
@@ -105,7 +105,7 @@ public class Main {
 
     public static void main(String[] arg) throws Exception {
 
-        if (arg[0].equals("-?") || arg[0].equals("--help")) {
+        if (arg.length == 0 || arg[0].equals("-?") || arg[0].equals("--help")) {
             printUsage();
             return;
         }
@@ -127,7 +127,7 @@ public class Main {
 
         run.initializeProductFromFile();
         run.initializeProductManually();
-        run.fetchDataToProduct();
+        run.performRun();
 
         /*
         Log("");
@@ -135,7 +135,7 @@ public class Main {
         String path = "d:\\sources\\ohdsi\\trash\\";
         for (Metrics obj: metrics) {
             byte [] bytes_out = SerializeHelper.serialize(obj);
-            String filename = obj.getClass().getSimpleName() + Long.toHexString(obj.getId()) + ".ser";
+            String filename = obj.getClass().getSimpleName() + Long.toHexString(obj.GetId()) + ".ser";
             FileOutputStream fos = new FileOutputStream(path + filename);
             fos.write(bytes_out);
             fos.close();

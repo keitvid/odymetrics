@@ -5,7 +5,6 @@ import metrics.Metrics;
 import metrics.MetricsData;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.Driver;
@@ -36,7 +35,7 @@ public class DBService <V> implements IMetricsVisitor{
         }
     }
 
-    public void visit(Metrics metrics, String schema_name, String table_name) throws DBException, ColumnException {
+    public void visit(Metrics metrics, String schema_name, String table_name){
 
         try {
             String query = metrics.getQuery(schema_name, table_name);
@@ -44,10 +43,24 @@ public class DBService <V> implements IMetricsVisitor{
             MetricsData metricsData = request.execute();
             metrics.setData(metricsData);
 
-        } catch (SQLException e) {
-            throw new DBException(e);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+    }
 
+    public Long executeQuery(String query){
+        MetricsData metricsData;
+        try {
+            Request request = new Request(connection, query);
+            metricsData = request.execute();
+
+            if(metricsData.getType() == MetricsData.MetricType.TYPE_LONG){
+                return metricsData.getLong();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0l;
     }
 
     public void printConnectInfo() {
@@ -74,24 +87,25 @@ public class DBService <V> implements IMetricsVisitor{
 
             //Promt user for password here
 
-            Log("Please enter the password for user " + username + " on " + dbUrl);
+            Log("Please enter the password for user " + username + " on " + dbUrl + " :");
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
             String a = br.readLine();
+
+            //TODO check this on target machine
+            /*Console cons;
+            char[] passwd;
+            if ((cons = System.console()) != null &&
+                    (passwd = cons.readPassword("[%s]", "Password:")) != null) {
+                java.util.Arrays.fill(passwd, ' ');
+            }*/
 
             Connection connection = DriverManager.getConnection(url.toString(), username, a);
 
             return connection;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e)  {
-            e.printStackTrace();
-        }  catch (IllegalAccessException e)  {
-            e.printStackTrace();
-        }  catch (ClassNotFoundException e)  {
-            e.printStackTrace();
-        } catch (IOException e) {
+        }  catch (Exception e)  {
             e.printStackTrace();
         }
+
         return null;
     }
 }

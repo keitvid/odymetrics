@@ -29,6 +29,10 @@ public class Request <T> {
         this.query = query;
     }
 
+    public void executeUpdate() throws SQLException {
+        executor.execUpdate(query);
+    }
+
     public MetricsData execute() throws SQLException, ColumnException {
 
         return executor.execQuery(query,
@@ -57,7 +61,7 @@ public class Request <T> {
                                 }
                                 metricsData = new MetricsData(lstr);
                             } else {
-                                if (columnTypeStr == "int8") {
+                                if (columnTypeStr == "int8" || columnTypeStr == "int4") {
                                     result.next();
                                     metricsData = new MetricsData(result.getLong(1));
                                 } else if (columnTypeStr == "varchar") {

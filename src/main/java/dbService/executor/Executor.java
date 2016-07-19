@@ -21,9 +21,9 @@ public class Executor {
         this.connection = connection;
     }
 
-    public void execUpdate(String update) throws SQLException {
+    public void execUpdate(String query) throws SQLException {
         Statement stmt = connection.createStatement();
-        stmt.execute(update);
+        stmt.executeUpdate(query);
         stmt.close();
     }
 

@@ -128,6 +128,7 @@ public class Main {
         run.initializeProductFromFile();
         run.initializeProductManually();
         run.performRun();
+        run.saveDataToDb();
 
         /*
         Log("");

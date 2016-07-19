@@ -3,10 +3,8 @@ package builder;
 import main.DbCredentials;
 import metrics.Metrics;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Created by FLisochenko on 14.07.2016.
@@ -14,7 +12,8 @@ import java.util.List;
 public class TableProduct {
     private List<Metrics> listOfMetrics;
     private DbCredentials dbCredentials;
-    private Date date = new Date();
+    //private Date date = new Date();
+    private Calendar calendar;
     private Long rowsCount = 0l;
     private Long uniqueRowsCount = 0l;
 
@@ -39,8 +38,11 @@ public class TableProduct {
     }
 
     public void addMetric(Metrics obj){listOfMetrics.add(obj);}
-    public void setDate() {date = new Date();}
-    public Date getDate() {return date;}
+    public void setDate() {calendar = Calendar.getInstance();}
+
+    public String getDate() {
+        return new SimpleDateFormat("yyyyMMdd HH:mm:ss").format(calendar.getTimeInMillis());
+        }
 
     public Boolean isEmpty(){return listOfMetrics.isEmpty();}
 

@@ -6,10 +6,7 @@ import metrics.MetricsData;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 
 import static main.Main.Log;
 
@@ -63,6 +60,15 @@ public class DBService <V> implements IMetricsVisitor{
         return 0l;
     }
 
+    public void executeUpdate(String query) {
+        try {
+            Request request = new Request(connection, query);
+            request.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void printConnectInfo() {
         try {
             System.out.println("DB name: " + connection.getMetaData().getDatabaseProductName());
@@ -74,16 +80,18 @@ public class DBService <V> implements IMetricsVisitor{
         }
     }
 
+    public PreparedStatement prepareStatement(String prepare_query) throws SQLException{
+            return connection.prepareStatement(prepare_query);
+    }
+
     @SuppressWarnings("UnusedDeclaration")
 
     protected static Connection getRedConnection(String dbUrl, String username) {
         try {
-            Driver driver = (Driver) Class.forName("org.postgresql.Driver").newInstance();
+            Class.forName("org.postgresql.Driver").newInstance();
             StringBuilder url = new StringBuilder();
-            PropertiesContainer prop = new PropertiesContainer();
 
-            url.append("jdbc:postgresql://"). //FIXME Magic number
-                append(dbUrl);
+            url.append("jdbc:postgresql://").append(dbUrl); //FIXME Magic number
 
             //Promt user for password here
 
@@ -99,9 +107,7 @@ public class DBService <V> implements IMetricsVisitor{
                 java.util.Arrays.fill(passwd, ' ');
             }*/
 
-            Connection connection = DriverManager.getConnection(url.toString(), username, a);
-
-            return connection;
+            return DriverManager.getConnection(url.toString(), username, a);
         }  catch (Exception e)  {
             e.printStackTrace();
         }

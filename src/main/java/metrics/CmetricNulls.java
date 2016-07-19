@@ -12,7 +12,7 @@ public class CmetricNulls extends Metrics {
 
     @Override
     public String getInfo() {
-        return "isEmpty " + isEmpty + " CmetricNull " + data.data_long;
+        return "[" + data.data_long +"] -> Nulls in " + col_name;
     }
 
     public Long getLongValue() throws MetricsTypeException {

@@ -12,7 +12,7 @@ public class CmetricUniqueValues extends Metrics {
 
     @Override
     public String getInfo() {
-        return "isEmpty " + isEmpty + " CmetricUniqueValues " + data.data_long;
+        return "[" + data.data_long +"] -> Unique Values in " + col_name;
     }
 
 

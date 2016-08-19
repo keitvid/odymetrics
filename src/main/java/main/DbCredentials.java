@@ -39,5 +39,9 @@ final public class DbCredentials {
         this.propFilePath = propFilePath;
     }
 
+    public boolean isEmpty() {
+        return dbName.equals("") || schemaName.equals("") || tableName.equals("") || userName.equals("")
+                || propFilePath.equals("");
+    }
     public DbCredentials(){} //TODO add null creds flag and throw exception?
 }

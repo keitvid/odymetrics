@@ -31,7 +31,7 @@ public class MainMetricRun {
 
     public void initializeProductFromFile(){
         Log("Adding the following metrics for the run:");
-        builderTB.printThemAll();
+        //builderTB.printThemAll();
         builderTB.populateMetrics();
     }
 

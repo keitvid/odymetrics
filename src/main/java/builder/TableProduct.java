@@ -84,7 +84,7 @@ public class TableProduct {
 
     @Override
     public String toString() {
-        return "\nDatabase name: " + dbCredentials.getDbName().split("/")
+        return "\nDatabase name: " + dbCredentials.getDbName()
                 + "\nSchema name: " + dbCredentials.getSchemaName()
                 + "\nTable name: " + dbCredentials.getTableName()
                 + "\nUser name: " + dbCredentials.getUserName()

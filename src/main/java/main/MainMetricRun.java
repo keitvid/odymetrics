@@ -9,6 +9,7 @@ import metrics.SerializeHelper;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Iterator;
 
@@ -20,32 +21,48 @@ import static main.Main.Log;
  */
 public class MainMetricRun {
 
-    protected BuilderTB builderTB = new BuilderTB();
+    ArrayList<BuilderTB> builders = new ArrayList<BuilderTB>();
+
     protected DBService dbService;
 
     public MainMetricRun(DbCredentials obj)
     {
-        builderTB.addCredentials(obj);
+        for(int i = 0; i < obj.getPropFilePathsList().size(); i++){
+            builders.add(new BuilderTB());
+            builders.get(builders.size()-1).addCredentials(obj, i);
+        }
+
         dbService = new DBService(obj.getDbName(), obj.getUserName());
     }
 
     public void initializeProductFromFile(){
         Log("Adding the following metrics for the run:");
-        builderTB.printThemAll();
-        builderTB.populateMetrics();
+        for(BuilderTB tb : builders){
+            tb.printThemAll();
+        }
+        for(BuilderTB tb : builders){
+            tb.populateMetrics();
+        }
     }
 
     public void initializeProductManually() {
         //This is a place where you can add any Metrics to product ahead of the ones you added from file
 
-        if(DEBUG) {
-            Log("");
-            Log(builderTB.getProduct().toString());
-            Log("");
+        for(BuilderTB tb : builders){
+            if(DEBUG) {
+                Log("");
+                Log(tb.getProduct().toString());
+                Log("");
+            }
         }
     }
 
-    public void performRun() throws Exception { //TODO implement exception
+    public void perperformRunAll() throws Exception {
+        for(BuilderTB tb : builders){
+            performRun(tb);
+        }
+    }
+    public void performRun(BuilderTB builderTB) throws Exception { //TODO implement exception
 
         if(builderTB.isProductEmpty()) {
             throw new Exception("Product has no metrics");
@@ -58,7 +75,7 @@ public class MainMetricRun {
         Long rowsCount = dbService.executeQuery(
                 String.format("select count(*) from %s.%s",
                 tableProduct.getCredentials().getSchemaName(),
-                tableProduct.getCredentials().getTableName())
+                tableProduct.getCredentials().getTableName(builderTB.currNum))
         );
 
         tableProduct.setRowsCount(rowsCount);
@@ -66,14 +83,14 @@ public class MainMetricRun {
         Long uniqueRowsCount = dbService.executeQuery(
                 String.format("select distinct count(*) from %s.%s",
                 tableProduct.getCredentials().getSchemaName(),
-                tableProduct.getCredentials().getTableName())
+                tableProduct.getCredentials().getTableName(builderTB.currNum))
         );
 
         tableProduct.setUniqueRowsCount(uniqueRowsCount);
 
         if(DEBUG){
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
-            Log("Table:             " + tableProduct.getCredentials().getSchemaName() + "." + tableProduct.getCredentials().getTableName());
+            Log("Table:             " + tableProduct.getCredentials().getSchemaName() + "." + tableProduct.getCredentials().getTableName(builderTB.currNum));
             Log("Date:              " + tableProduct.getDate());
             Log("Rows count:        " + tableProduct.getRowsCount());
             Log("Unique Rows count: " + tableProduct.getUniqueRowsCount());
@@ -90,7 +107,7 @@ public class MainMetricRun {
             dbService.visit(
                     currentEntry,
                     tableProduct.getCredentials().getSchemaName(),
-                    tableProduct.getCredentials().getTableName()
+                    tableProduct.getCredentials().getTableName(builderTB.currNum)
             );
 
             if(DEBUG) {
@@ -99,7 +116,13 @@ public class MainMetricRun {
         }
     }
 
-    public void saveDataToDb() throws Exception { //TODO Implement Exception
+    public void saveDatoToDbAll()throws Exception {
+        for(BuilderTB tb : builders){
+            saveDataToDb(tb);
+        }
+    }
+
+    public void saveDataToDb(BuilderTB builderTB) throws Exception { //TODO Implement Exception
 
         if(builderTB.isProductEmpty()) {
             throw new Exception("Product has no metrics");
@@ -147,7 +170,7 @@ public class MainMetricRun {
         formatted_query = String.format(sql,
                 tableProduct.getCredentials().getSchemaName(),
                 "odymetrics_run",
-                tableProduct.getCredentials().getTableName(),
+                tableProduct.getCredentials().getTableName(builderTB.currNum),
                 tableProduct.getDate(),
                 tableProduct.getRowsCount(),
                 tableProduct.getUniqueRowsCount(),

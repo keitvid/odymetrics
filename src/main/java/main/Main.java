@@ -48,9 +48,16 @@ public class Main {
     private static DbCredentials createCredsFromArgs() throws IllegalArgumentException {
         String dbName = "";
         String schemaName = "";
-        String tableName = "";
+        ArrayList<String> tableNamesList = new ArrayList<String>(); //TODO fix this for multiple prop files
+        ArrayList<String> propFilePathsList = new ArrayList<String>(); //TODO fix this for multiple prop files
         String userName = "";
-        String propFilePath = argsList.get(0); //TODO fix this for multiple prop files
+
+        for (int i = 0; i < argsList.size(); i++){
+            String param = argsList.get(i);
+            String tblName = param.replace(".prop", "");
+            propFilePathsList.add(param);
+            tableNamesList.add(tblName);
+        }
 
         Iterator it = optsHash.entrySet().iterator();
 
@@ -69,10 +76,6 @@ public class Main {
             {
                 schemaName = value;
             }
-            else if (key.equals("-t"))
-            {
-                tableName = value;
-            }
             else if (key.equals("-u"))
             {
                 userName = value;
@@ -83,13 +86,13 @@ public class Main {
             }
         }
 
-        if (dbName.length() == 0 || schemaName.length() == 0 || tableName.length() == 0 || userName.length() == 0 ||
-                propFilePath.length() == 0)
+        if (dbName.length() == 0 || schemaName.length() == 0 || tableNamesList.size() < 1 || userName.length() == 0 ||
+                propFilePathsList.size() < 1)
         {
             throw new IllegalArgumentException("Not enough arguments");
         }
 
-        return new DbCredentials(dbName, schemaName, tableName, userName, propFilePath);
+        return new DbCredentials(dbName, schemaName, tableNamesList, userName, propFilePathsList);
     }
 
     private static void printUsage() {
@@ -127,8 +130,8 @@ public class Main {
 
         run.initializeProductFromFile();
         run.initializeProductManually();
-        run.performRun();
-        run.saveDataToDb();
+        run.perperformRunAll();
+        run.saveDatoToDbAll();
 
         /*
         Log("");

@@ -8,10 +8,12 @@ import metrics.Metrics;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Properties;
 
 public class BuilderTB {
+    public Integer currNum = -1;
 
     TableProduct tableProduct = new TableProduct();
 
@@ -19,8 +21,10 @@ public class BuilderTB {
 
     public Boolean isProductEmpty(){return getProduct().isEmpty();}
 
-    public void addCredentials(DbCredentials creds) {
+    public void addCredentials(DbCredentials creds, Integer CurrentNumber) {
+        currNum = CurrentNumber;
         getProduct().addCredentials(creds); //TODO add flag check
+
     }
 
     public Metrics createClasses(String className, String columnName) throws ClassNotFoundException {
@@ -41,7 +45,7 @@ public class BuilderTB {
 
     public void populateMetrics() {
 
-        String fileName = getProduct().getCredentials().getPropFilePath(); //FIXME this should be safe
+        String fileName = getProduct().getCredentials().getPropFilePath(currNum); //FIXME this should be safe
         Properties prop = new Properties();
         InputStream input = null;
 
@@ -84,7 +88,7 @@ public class BuilderTB {
 
     public void printThemAll() {
 
-        String fileName = getProduct().getCredentials().getPropFilePath(); //FIXME this should be safe as well
+        String fileName = getProduct().getCredentials().getPropFilePath(currNum); //FIXME this should be safe as well
         Properties prop = new Properties();
         InputStream input = null;
 

@@ -20,24 +20,25 @@ import static main.Main.Log;
  */
 public class MainMetricRun {
 
-    protected BuilderTB builderTB = new BuilderTB();
+    BuilderTB builderTB;
+
     protected DBService dbService;
 
-    public MainMetricRun(DbCredentials obj)
-    {
+    public MainMetricRun(DbCredentials obj) {
+        builderTB = new BuilderTB();
         builderTB.addCredentials(obj);
         dbService = new DBService(obj.getDbName(), obj.getUserName());
     }
 
     public void initializeProductFromFile(){
         Log("Adding the following metrics for the run:");
+
         builderTB.printThemAll();
         builderTB.populateMetrics();
     }
 
     public void initializeProductManually() {
         //This is a place where you can add any Metrics to product ahead of the ones you added from file
-
         if(DEBUG) {
             Log("");
             Log(builderTB.getProduct().toString());

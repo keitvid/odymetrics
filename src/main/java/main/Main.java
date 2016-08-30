@@ -10,7 +10,7 @@ public class Main {
     private static List<String> argsList = new ArrayList<String>();
     private static HashMap<String, String> optsHash = new HashMap<String, String>();
     private static List<String> doubleOptsList = new ArrayList<String>();
-    private static DbCredentials dbCreds = null;
+    private static ArrayList<DbCredentials> dbCreds = new ArrayList<DbCredentials>();
 
     public static Boolean DEBUG = false;
 
@@ -45,13 +45,19 @@ public class Main {
         }
     }
 
-    private static DbCredentials createCredsFromArgs() throws IllegalArgumentException {
+    private static ArrayList<DbCredentials> createCredsFromArgs() throws IllegalArgumentException {
         String dbName = "";
         String schemaName = "";
-        String tableName = "";
+        ArrayList<String> tableNamesList = new ArrayList<String>(); //TODO fix this for multiple prop files
+        ArrayList<String> propFilePathsList = new ArrayList<String>(); //TODO fix this for multiple prop files
         String userName = "";
-        String propFilePath = argsList.get(0); //TODO fix this for multiple prop files
 
+        for (int i = 0; i < argsList.size(); i++){
+            String param = argsList.get(i);
+            String tblName = param.replace(".prop", "");
+            propFilePathsList.add(param);
+            tableNamesList.add(tblName);
+        }
         Iterator it = optsHash.entrySet().iterator();
 
         while (it.hasNext())
@@ -69,10 +75,6 @@ public class Main {
             {
                 schemaName = value;
             }
-            else if (key.equals("-t"))
-            {
-                tableName = value;
-            }
             else if (key.equals("-u"))
             {
                 userName = value;
@@ -83,13 +85,18 @@ public class Main {
             }
         }
 
-        if (dbName.length() == 0 || schemaName.length() == 0 || tableName.length() == 0 || userName.length() == 0 ||
-                propFilePath.length() == 0)
+        if (dbName.length() == 0 || schemaName.length() == 0 || tableNamesList.size() < 1 || userName.length() == 0 ||
+                propFilePathsList.size() < 1)
         {
             throw new IllegalArgumentException("Not enough arguments");
         }
 
-        return new DbCredentials(dbName, schemaName, tableName, userName, propFilePath);
+        ArrayList<DbCredentials> results = new ArrayList<DbCredentials>();
+
+        for(int i = 0; i < tableNamesList.size(); i++) {
+            results.add(new DbCredentials(dbName, schemaName, tableNamesList.get(i), userName, propFilePathsList.get(i)));
+        }
+        return results;
     }
 
     private static void printUsage() {
@@ -97,7 +104,7 @@ public class Main {
         Log("Options:");
         Log("-d Database name");
         Log("-s Schema name");
-        Log("-t Table name");
+        //Log("-t Table name");
         Log("-u User name");
         Log("-? --help Print this help list");
         Log("--debug Toggle debug mode");
@@ -123,24 +130,14 @@ public class Main {
             printUsage();
         }
 
-        MainMetricRun run = new MainMetricRun(dbCreds);
+        for(int i = 0; i < dbCreds.size(); i++) {
 
-        run.initializeProductFromFile();
-        run.initializeProductManually();
-        run.performRun();
-        run.saveDataToDb();
+            MainMetricRun run = new MainMetricRun(dbCreds.get(i));
 
-        /*
-        Log("");
-
-        String path = "d:\\sources\\ohdsi\\trash\\";
-        for (Metrics obj: metrics) {
-            byte [] bytes_out = SerializeHelper.serialize(obj);
-            String filename = obj.getClass().getSimpleName() + Long.toHexString(obj.GetId()) + ".ser";
-            FileOutputStream fos = new FileOutputStream(path + filename);
-            fos.write(bytes_out);
-            fos.close();
+            run.initializeProductFromFile();
+            run.initializeProductManually();
+            run.performRun();
+            run.saveDataToDb();
         }
-        */
     }
 }

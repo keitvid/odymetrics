@@ -42,14 +42,15 @@ public class TableProduct {
         return (rowsCount == uniqueRowsCount);
     }
 
+    // throw IllegalArgumentException, because null is not a valid argument value.
     public void addMetric(Metrics obj){
         try {
             if (obj == null){
-                throw new NullPointerException("Bad object add");
+                throw new IllegalArgumentException("Metric is null");
             } else {
                 listOfMetrics.add(obj);
             }
-        } catch(NullPointerException e)  {
+        } catch(Exception e)  {
             e.printStackTrace();
             return;
         }
@@ -60,9 +61,10 @@ public class TableProduct {
     public String getDate() {
         try {
             return new SimpleDateFormat("yyyyMMdd HH:mm:ss").format(calendar.getTimeInMillis());
-        } catch (NullPointerException e) {
-            throw new IllegalArgumentException("Date did not set");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return null;
     }
     public Boolean isEmpty(){
         return listOfMetrics.isEmpty() || dbCredentials.isEmpty();

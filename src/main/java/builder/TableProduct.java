@@ -4,7 +4,10 @@ import main.DbCredentials;
 import metrics.Metrics;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by FLisochenko on 14.07.2016.
@@ -12,7 +15,6 @@ import java.util.*;
 public class TableProduct {
     private List<Metrics> listOfMetrics;
     private DbCredentials dbCredentials;
-    //private Date date = new Date();
     private Calendar calendar;
     private Long rowsCount = 0l;
     private Long uniqueRowsCount = 0l;
@@ -22,7 +24,8 @@ public class TableProduct {
     }
 
     public void setUniqueRowsCount(Long uniqueRowsCount) {
-        this.uniqueRowsCount = uniqueRowsCount;
+        if (uniqueRowsCount >= 0) {this.uniqueRowsCount = uniqueRowsCount;}
+        else {throw new IllegalArgumentException("uniqueRowsCount less or equals 0");}
     }
 
     public Long getRowsCount() {
@@ -30,21 +33,42 @@ public class TableProduct {
     }
 
     public void setRowsCount(Long rowsCount) {
-        this.rowsCount = rowsCount;
+        if(rowsCount > 0) {this.rowsCount = rowsCount;}
+        else {throw new IllegalArgumentException("rowsCount less or equals 0");}
+
     }
 
     public Boolean hasDuplicates() {
         return (rowsCount == uniqueRowsCount);
     }
 
-    public void addMetric(Metrics obj){listOfMetrics.add(obj);}
+    // throw IllegalArgumentException, because null is not a valid argument value.
+    public void addMetric(Metrics obj){
+        try {
+            if (obj == null){
+                throw new IllegalArgumentException("Metric is null");
+            } else {
+                listOfMetrics.add(obj);
+            }
+        } catch(Exception e)  {
+            e.printStackTrace();
+            return;
+        }
+    }
+
     public void setDate() {calendar = Calendar.getInstance();}
 
     public String getDate() {
-        return new SimpleDateFormat("yyyyMMdd HH:mm:ss").format(calendar.getTimeInMillis());
+        try {
+            return new SimpleDateFormat("yyyyMMdd HH:mm:ss").format(calendar.getTimeInMillis());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-    public Boolean isEmpty(){return listOfMetrics.isEmpty();}
+        return null;
+    }
+    public Boolean isEmpty(){
+        return listOfMetrics.isEmpty() || dbCredentials.isEmpty();
+    }
 
     public TableProduct() {
         listOfMetrics = new ArrayList<Metrics>();
@@ -62,6 +86,13 @@ public class TableProduct {
 
     @Override
     public String toString() {
-        return super.toString() + " : " + listOfMetrics;
+        return "\nDatabase name: " + dbCredentials.getDbName()
+                + "\nSchema name: " + dbCredentials.getSchemaName()
+                + "\nTable name: " + dbCredentials.getTableName()
+                + "\nUser name: " + dbCredentials.getUserName()
+                + "\nProp file path: " + dbCredentials.getPropFilePath()
+                + "\nRows count: " + rowsCount
+                + "\nUnique Rows count: " + uniqueRowsCount
+                + "\nHas Dublicates: " + hasDuplicates();
     }
 }

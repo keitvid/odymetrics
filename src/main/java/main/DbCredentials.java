@@ -65,5 +65,5 @@ final public class DbCredentials {
     }
 
     public DbCredentials() {
-    } //TODO add null creds flag and throw exception?
+    }
 }

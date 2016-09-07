@@ -126,9 +126,10 @@ public class Main {
         MainMetricRun run = new MainMetricRun(dbCreds);
 
         run.initializeProductFromFile();
+        run.initializeProductManually();
         run.performRun();
         run.saveDataToDb();
-        run.initializeProductManually();
+
         /*
         Log("");
 

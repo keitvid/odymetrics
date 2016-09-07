@@ -31,18 +31,11 @@ public class MainMetricRun {
 
     public void initializeProductFromFile(){
         Log("Adding the following metrics for the run:");
-        //builderTB.printThemAll();
         builderTB.populateMetrics();
     }
 
     public void initializeProductManually() {
         //This is a place where you can add any Metrics to product ahead of the ones you added from file
-
-        if(DEBUG) {
-            Log("");
-            Log(builderTB.getProduct().toString());
-            Log("");
-        }
     }
 
     public void performRun() throws Exception { //TODO implement exception

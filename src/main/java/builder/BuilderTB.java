@@ -25,7 +25,7 @@ public class BuilderTB {
     public void addCredentials(DbCredentials creds) {
 
         if (!creds.isEmpty()) {
-            getProduct().addCredentials(creds); //TODO add flag check
+            getProduct().addCredentials(creds);
         } else {
             throw new IllegalArgumentException("Credentials are not populated");
         }
@@ -36,7 +36,7 @@ public class BuilderTB {
         Metrics metric = null;
         Constructor c;
         try {
-            c = Class.forName(PACKAGE_NAME + className).getConstructor(String.class); //FIXME magic word
+            c = Class.forName(PACKAGE_NAME + className).getConstructor(String.class);
             metric = (Metrics) c.newInstance(columnName);
 
         } catch (Exception e) {
@@ -48,7 +48,7 @@ public class BuilderTB {
 
     public void populateMetrics() {
 
-        String fileName = getProduct().getCredentials().getPropFilePath(); //FIXME this should be safe
+        String fileName = getProduct().getCredentials().getPropFilePath();
         Properties prop = new Properties();
 
         try (InputStream input = getClass().getClassLoader().getResourceAsStream(fileName)) {
@@ -64,16 +64,14 @@ public class BuilderTB {
                 String[] parts = property.split("-");
                 String columnName = parts[0];
                 String classType = parts[1];
-                try {
-                    getProduct().addMetric(createClasses(classType, columnName));
-                } catch (Exception e1) {
-                    e1.printStackTrace();
-                }
+                getProduct().addMetric(createClasses(classType, columnName));
             }
 
         } catch (IOException ex) {
             ex.printStackTrace();
             return;
+        } catch (Exception e1) {
+            e1.printStackTrace();
         }
     }
 

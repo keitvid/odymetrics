@@ -6,23 +6,43 @@ package main;
 final public class DbCredentials {
 
     public String getDbName() {
-        return dbName;
+        if (!dbName.equals("")) {
+            return dbName;
+        } else {
+            throw new IllegalArgumentException("Database name is not populated");
+        }
     }
 
     public String getSchemaName() {
-        return schemaName;
+        if (!schemaName.equals("")) {
+            return schemaName;
+        } else {
+            throw new IllegalArgumentException("Schema name is not populated");
+        }
     }
 
     public String getTableName() {
-        return tableName;
+        if (!tableName.equals("")) {
+            return tableName;
+        } else {
+            throw new IllegalArgumentException("Table name is not populated");
+        }
     }
 
     public String getUserName() {
-        return userName;
+        if (!userName.equals("")) {
+            return userName;
+        } else {
+            throw new IllegalArgumentException("User name is not populated");
+        }
     }
 
     public String getPropFilePath() {
-        return propFilePath;
+        if (!propFilePath.equals("")) {
+            return propFilePath;
+        } else {
+            throw new IllegalArgumentException("Prop file path is not populated");
+        }
     }
 
     private String dbName;
@@ -31,7 +51,7 @@ final public class DbCredentials {
     private String userName;
     private String propFilePath;
 
-    public DbCredentials(String dbName, String schemaName, String tableName, String userName, String propFilePath){
+    public DbCredentials(String dbName, String schemaName, String tableName, String userName, String propFilePath) {
         this.dbName = dbName;
         this.schemaName = schemaName;
         this.tableName = tableName;
@@ -39,5 +59,11 @@ final public class DbCredentials {
         this.propFilePath = propFilePath;
     }
 
-    public DbCredentials(){} //TODO add null creds flag and throw exception?
+    public boolean isEmpty() {
+        return dbName.equals("") || schemaName.equals("") || tableName.equals("") || userName.equals("")
+                || propFilePath.equals("");
+    }
+
+    public DbCredentials() {
+    }
 }
